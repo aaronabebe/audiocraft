@@ -90,9 +90,12 @@ def load_lm_model_ckpt(file_or_url_or_id: tp.Union[Path, str], cache_dir: tp.Opt
 def _delete_param(cfg: DictConfig, full_name: str):
     parts = full_name.split('.')
     for part in parts[:-1]:
-        if part in cfg:
-            cfg = cfg[part]
-        else:
+        try:
+            if part in cfg:
+                cfg = cfg[part]
+            else:
+                return
+        except TypeError:
             return
     OmegaConf.set_struct(cfg, False)
     if parts[-1] in cfg:
